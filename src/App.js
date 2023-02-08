@@ -16,14 +16,11 @@ function App() {
 
   return (
     <CartProvider>
-    {/* <> */}
       {cartIsShown ? <Cart onClose={hideCartHandler} /> : null}
       <Header onShowCart={showCartHandler} />
       <main>
         <Meals />
       </main>
-    {/* </> */}
-
     </CartProvider>
   );
 }

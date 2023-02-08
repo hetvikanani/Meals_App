@@ -1,31 +1,47 @@
-import React from "react";
+import React, { useContext } from "react";
 import classes from "./Cart.module.css";
 import Modal from "../UI/Modal/Modal";
+import CartContext from "../../store/cart-context";
+import CartItem from "./CartItem";
 
 const Cart = (props) => {
+    const cartCtx = useContext(CartContext);
+    const hasItems = cartCtx.items.length > 0;
+
+    const cartItemAddHandler = (item) => {
+        cartCtx.addItem(item)
+    };
+
+    const removeItemAddHandler = (id) => {
+        cartCtx.removeItem(id)
+    };
+
     return (
         <Modal>
             <ul className={classes["cart-items"]}>
-                {[
-                    {
-                        id: "m1",
-                        name: "Sushi",
-                        description: "Finest fish and veggies",
-                        price: 22.99,
-                    },
-                ].map((ele) => {
-                    return <li>{ele.name}</li>;
+                {cartCtx.items.map((ele) => {
+                    // return <li>{ele.name}</li>;
+                    return (
+                        <CartItem
+                            key={ele.id}
+                            name={ele.name}
+                            price={ele.price}
+                            amount={ele.amount}
+                            onAdd={cartItemAddHandler.bind(null, ele)}
+                            onRemove={removeItemAddHandler.bind(null, ele.id)}
+                        />
+                    );
                 })}
             </ul>
             <div className={classes.total}>
                 <span>Total Amount</span>
-                <span>35.82</span>
+                <span>{`$ ${cartCtx.totalAmount.toFixed(2)}`}</span>
             </div>
             <div className={classes.actions}>
                 <button className={classes[`button--alt`]} onClick={props.onClose}>
                     Close
                 </button>
-                <button className={classes.button}>Order</button>
+                {hasItems ? <button className={classes.button}>Order</button> : null}
             </div>
         </Modal>
     );
