@@ -1,46 +1,65 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../UI/Card/Card";
 import classes from "./AvailableMeals.module.css";
 import MealItem from "./MealItem/MealItem";
-
-const DUMMY_MEALS = [
-    {
-        id: "m1",
-        name: "Sushi",
-        description: "Finest fish and veggies",
-        price: 22.99,
-    },
-    {
-        id: "m2",
-        name: "Schnitzel",
-        description: "A german specialty!",
-        price: 16.5,
-    },
-    {
-        id: "m3",
-        name: "Barbecue Burger",
-        description: "American, raw, meaty",
-        price: 12.99,
-    },
-    {
-        id: "m4",
-        name: "Green Bowl",
-        description: "Healthy...and green...",
-        price: 18.99,
-    },
-];
+import axios from "axios";
 
 const AvailableMeals = () => {
+    const [meals, setMeals] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchMeals = async () => {
+            const result = await axios.get(
+                `https://meal-f06cc-default-rtdb.asia-southeast1.firebasedatabase.app/meals.json`
+            );
+            const loadedMeals = Object.values(result.data);
+
+            setMeals(loadedMeals);
+            if (loadedMeals.length > 0) {
+                setIsLoading(true);
+                setTimeout(() => setIsLoading(false), 1000);
+            }
+        };
+        try {
+            fetchMeals();
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
+
+    // if (isLoading) {
+    //     return (
+    //         <section className={classes.MealsLoading}>
+    //             <p>Loading...</p>
+    //         </section>s
+    //     )
+    // }
+
     return (
         <section className={classes.meals}>
-            <Card>
-                <ul>
-                    {DUMMY_MEALS.map((ele) => {
-                        return <MealItem key={ele.id} id={ele.id} name={ele.name} price={ele.price} description={ele.description} />;
-                    })}
-                </ul>
-            </Card>
-
+            {isLoading && (
+                <section className={classes.MealsLoading}>
+                    <p>Loading...</p>
+                </section>
+            )}
+            {!isLoading && (
+                <Card>
+                    <ul>
+                        {meals.map((ele) => {
+                            return (
+                                <MealItem
+                                    key={Math.random()}
+                                    id={ele.id}
+                                    name={ele.name}
+                                    price={ele.price}
+                                    description={ele.description}
+                                />
+                            );
+                        })}
+                    </ul>
+                </Card>
+            )}
         </section>
     );
 };

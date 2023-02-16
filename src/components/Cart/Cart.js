@@ -3,6 +3,7 @@ import classes from "./Cart.module.css";
 import Modal from "../UI/Modal/Modal";
 import CartContext from "../../store/cart-context";
 import CartItem from "./CartItem";
+import CheckOut from "./CheckOut";
 
 const Cart = (props) => {
   const cartCtx = useContext(CartContext);
@@ -37,6 +38,8 @@ const Cart = (props) => {
         <span>Total Amount</span>
         <span>{`$ ${cartCtx.totalAmount.toFixed(2)}`}</span>
       </div>
+      <CheckOut />
+
       <div className={classes.actions}>
         <button className={classes[`button--alt`]} onClick={props.onClose}>
           Close
